@@ -7,6 +7,11 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 
     public int completedLevels;
 
+    public void GiveMoney(int giveMoney)
+    {
+        money += giveMoney;
+    }
+
     public void TakeDamage(int damage)
     {
         health -= damage;
