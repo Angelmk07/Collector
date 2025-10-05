@@ -11,6 +11,7 @@ public class PlayerMelee : MonoBehaviour
 
     [SerializeField] private float attackCooldown = 0.5f;
     [SerializeField] private float attackDuration = 0.2f;
+    [SerializeField] private float damageBeginning = 0.2f;
 
     [SerializeField] private Color gizmoIdleColor = Color.white;
     [SerializeField] private Color gizmoAttackColor = Color.red;
@@ -18,8 +19,10 @@ public class PlayerMelee : MonoBehaviour
 
     private float cooldownTimer;
     private float attackTimer;
+    private float damageBeginningTimer;
     private int hitCount;
     private bool isAttacking;
+    private bool damageTriggered;
 
     void Update()
     {
@@ -35,21 +38,35 @@ public class PlayerMelee : MonoBehaviour
 
         if (attackTimer > 0)
             attackTimer -= Time.deltaTime;
+
+        if (damageBeginningTimer > 0)
+        {
+            damageBeginningTimer -= Time.deltaTime;
+
+            if (damageBeginningTimer <= 0 && !damageTriggered)
+                StartAttack();
+        }
     }
 
     void HandleAttack()
     {
         if (Input.GetMouseButtonDown(0) && cooldownTimer <= 0)
-            StartAttack();
+            DamageBeginning();
+    }
+
+    void DamageBeginning()
+    {
+        animator.SetTrigger("isAttack");
+        damageBeginningTimer = damageBeginning;
+        cooldownTimer = attackCooldown;
+        damageTriggered = false;
     }
 
     void StartAttack()
     {
-        animator.SetTrigger("isAttack");
-
         isAttacking = true;
         attackTimer = attackDuration;
-        cooldownTimer = attackCooldown;
+        damageTriggered = true;
 
         PerformAttack();
     }
@@ -57,7 +74,10 @@ public class PlayerMelee : MonoBehaviour
     void UpdateAttackState()
     {
         if (isAttacking && attackTimer <= 0)
+        {
             isAttacking = false;
+            damageBeginningTimer = 0;
+        }
     }
 
     void PerformAttack()

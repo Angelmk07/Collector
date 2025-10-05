@@ -22,6 +22,7 @@ public class DialogueSystem : MonoBehaviour
     private float timer;
     private bool isActive;
     private bool isTyping;
+    private bool playerInTrigger;
 
     void Awake()
     {
@@ -30,6 +31,9 @@ public class DialogueSystem : MonoBehaviour
 
     void Update()
     {
+        if (playerInTrigger && Input.GetKeyDown(KeyCode.E) && !isActive)
+            ActiveDialogue();
+
         UpdateText();
         UpdateTyping();
     }
@@ -118,7 +122,7 @@ public class DialogueSystem : MonoBehaviour
 
     private void StartTypingDialogue()
     {
-        personaImage = dialogueSettings[currentDialogue].persona;
+        personaImage.sprite = dialogueSettings[currentDialogue].persona;
         nameText.text = $"[ {dialogueSettings[currentDialogue].name} ]";
 
         ResetTyping();
@@ -146,5 +150,27 @@ public class DialogueSystem : MonoBehaviour
         currentText = "";
         timer = 0f;
         currentCharacter = 0;
+    }
+
+    public bool IsDialogueActive()
+    {
+        return isActive;
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Player")
+            playerInTrigger = true;
+    }
+
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "Player")
+            playerInTrigger = false;
+    }
+
+    public bool IsPlayerInTrigger()
+    {
+        return playerInTrigger;
     }
 }

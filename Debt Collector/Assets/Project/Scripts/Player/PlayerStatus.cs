@@ -7,6 +7,11 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 
     public int completedLevels;
 
+    void Awake()
+    {
+        LoadVariables();
+    }
+
     public void GiveMoney(int giveMoney)
     {
         money += giveMoney;

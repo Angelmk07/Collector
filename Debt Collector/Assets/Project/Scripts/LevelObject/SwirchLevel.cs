@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SwirchLevel : MonoBehaviour
 {
+    [SerializeField] private int nextLevelIndex;
     [SerializeField] private PlayerStatus playerStatus;
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -12,6 +12,7 @@ public class SwirchLevel : MonoBehaviour
         {
             playerStatus.completedLevels++;
             playerStatus.SaveVariables();
+            SceneManager.LoadScene(nextLevelIndex);
         }
     }
 }
