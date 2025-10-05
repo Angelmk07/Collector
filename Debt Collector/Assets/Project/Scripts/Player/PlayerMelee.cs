@@ -2,9 +2,11 @@ using UnityEngine;
 
 public class PlayerMelee : MonoBehaviour
 {
+    [SerializeField] private Animator animator;
+
     [SerializeField] private LayerMask enemyLayers;
     [SerializeField] private Vector3 attackPosition;
-    [SerializeField] private Vector3 attackSize;
+    [SerializeField] private float attackRadius;
     [SerializeField] private int damage = 1;
 
     [SerializeField] private float attackCooldown = 0.5f;
@@ -43,6 +45,8 @@ public class PlayerMelee : MonoBehaviour
 
     void StartAttack()
     {
+        animator.SetTrigger("isAttack");
+
         isAttacking = true;
         attackTimer = attackDuration;
         cooldownTimer = attackCooldown;
@@ -58,14 +62,15 @@ public class PlayerMelee : MonoBehaviour
 
     void PerformAttack()
     {
-        Vector3 boxCenter = transform.position + attackPosition;
-        Vector3 boxSize = attackSize;
+        Vector2 circleCenter = transform.position + attackPosition;
 
-        Collider[] hitColliders = Physics.OverlapBox(boxCenter, boxSize * 0.5f, transform.rotation, enemyLayers);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(circleCenter, attackRadius, enemyLayers);
         hitCount = hitColliders.Length;
 
         for (int i = 0; i < hitColliders.Length; i++)
+        {
             DealDamage(hitColliders[i].gameObject);
+        }
     }
 
     void DealDamage(GameObject target)
@@ -79,15 +84,14 @@ public class PlayerMelee : MonoBehaviour
     {
         if (showGizmos)
         {
-            Vector3 boxCenter = transform.position + attackPosition;
-            Vector3 boxSize = attackSize;
+            Vector3 circleCenter = transform.position + attackPosition;
 
             if (isAttacking)
                 Gizmos.color = gizmoAttackColor;
             else
                 Gizmos.color = gizmoIdleColor;
 
-            Gizmos.DrawWireCube(boxCenter, boxSize);
+            Gizmos.DrawWireSphere(circleCenter, attackRadius);
         }
     }
 }
