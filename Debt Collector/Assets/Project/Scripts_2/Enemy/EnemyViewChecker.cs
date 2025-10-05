@@ -48,7 +48,6 @@ public class EnemyViewChecker : MonoBehaviour
         if (isChasing && !isAttacking)
             ChasePlayer();
 
-        // Проверяем возможность атаки
         if (PlayerInSight && canAttack && IsPlayerInAttackRange())
         {
             StartAttack();
@@ -73,35 +72,25 @@ public class EnemyViewChecker : MonoBehaviour
         isAttacking = true;
         canAttack = false;
 
-        // Останавливаем преследование на время атаки
         StopMovement();
 
-        // Вызываем метод атаки
         PerformAttack();
 
-        // Ждем кулдаун
         yield return new WaitForSeconds(attackCooldown);
 
-        // Возобновляем возможность атаки и движения
         canAttack = true;
         isAttacking = false;
     }
 
     private void StopMovement()
     {
-        // Можно добавить дополнительную логику остановки здесь
-        // Например, сброс velocity если используете Rigidbody2D
     }
 
     private void PerformAttack()
     {
-        // Здесь реализуйте логику атаки
-        Debug.Log("Атакую игрока!");
 
-        // Вызов вашего метода TryMelee или другой логики атаки
         TryMelee();
 
-        // Дополнительно: можно добавить анимацию, нанесение урона и т.д.
     }
 
     void TryMelee()
@@ -122,14 +111,11 @@ public class EnemyViewChecker : MonoBehaviour
             }
         }
 
-        // Проверка попаданий по игроку
         foreach (var hit in hits)
         {
             if (hit.collider != null && hit.collider.CompareTag("Player"))
             {
-                // Нанесение урона игроку
                 Debug.Log("Попал по игроку!");
-                // hit.collider.GetComponent<PlayerHealth>().TakeDamage(damage);
             }
         }
     }
@@ -164,7 +150,6 @@ public class EnemyViewChecker : MonoBehaviour
             lastKnownPosition = target.position;
             isChasing = true;
 
-            // Поворачиваемся к игроку
             RotateTowards(target.position);
         }
     }
@@ -175,7 +160,6 @@ public class EnemyViewChecker : MonoBehaviour
 
         if (PlayerInSight)
         {
-            // Если игрок в зоне атаки - не двигаемся, только поворачиваемся
             if (!IsPlayerInAttackRange())
             {
                 MoveTowards(target.position);
@@ -184,7 +168,6 @@ public class EnemyViewChecker : MonoBehaviour
         }
         else
         {
-            // Поворачиваемся к последней известной позиции
             RotateTowards(lastKnownPosition);
             MoveTowards(lastKnownPosition);
 
@@ -204,10 +187,8 @@ public class EnemyViewChecker : MonoBehaviour
     {
         Vector2 direction = (targetPosition - transform.position).normalized;
 
-        // Вычисляем угол поворота
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        // Применяем поворот (в 2D обычно вокруг оси Z)
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
@@ -225,7 +206,6 @@ public class EnemyViewChecker : MonoBehaviour
         Gizmos.DrawRay(pos, leftDir);
         Gizmos.DrawWireSphere(pos, viewDistance);
 
-        // Визуализация дистанции атаки
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackDistance);
 

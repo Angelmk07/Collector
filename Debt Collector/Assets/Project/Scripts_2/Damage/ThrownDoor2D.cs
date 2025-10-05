@@ -12,7 +12,7 @@ public class ThrownDoor2D : MonoBehaviour
     private Rigidbody2D rb;
     private float elapsedTime;
 
-    private void Awake()
+    private void OnKick()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = useGravity ? 1f : 0f;
