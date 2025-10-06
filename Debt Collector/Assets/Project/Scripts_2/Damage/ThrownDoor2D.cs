@@ -8,10 +8,15 @@ public class ThrownDoor2D : MonoBehaviour
     [SerializeField] private float throwForce = 8f;
     [SerializeField] private float lifetime = 2f;
     [SerializeField] private bool useGravity = false;
-
+    [SerializeField] private HpController hpController;
+    [SerializeField] private bool Used;
     private Rigidbody2D rb;
     private float elapsedTime;
 
+    private void Start()
+    {
+        hpController.OnDead.AddListener(OnKick);
+    }
     private void OnKick()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -21,10 +26,12 @@ public class ThrownDoor2D : MonoBehaviour
         rb.velocity = direction * throwForce;
 
         elapsedTime = 0f;
+        Used = true;
     }
 
     private void Update()
     {
+        if (!Used) return;
         elapsedTime += Time.deltaTime;
 
         if (elapsedTime >= lifetime)

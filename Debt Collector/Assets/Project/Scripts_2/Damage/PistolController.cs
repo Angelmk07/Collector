@@ -4,23 +4,26 @@ using UnityEngine.Events;
 [RequireComponent(typeof(LineRenderer))]
 public class PistolController : MonoBehaviour
 {
+    public UnityEvent OnThrow;
+    public bool canRange;
     [Header("Ammo")]
     [SerializeField] private int magazineSize = 6;
     [SerializeField] private int currentAmmo;
 
     [Header("Fire settings")]
     [SerializeField] private float fireRate = 0.25f;
-    [SerializeField] private float bulletSpeed = 20f;
-    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private int damage = 1;
     [SerializeField] private Transform shootPoint;
     [SerializeField] private LayerMask hitMask;
     [SerializeField] private bool IsOun = false;
+    private Coroutine fadeCoroutine;
+
 
     [Header("Line settings")]
     [SerializeField] private float lineDuration = 0.1f;
     [SerializeField] private float fadeDuration = 0.3f;
     [SerializeField] private float hitRange = 50f;
-    private LineRenderer line;
+    [SerializeField] private LineRenderer line;
 
     [Header("Throw settings")]
     [SerializeField] private float throwSpeed = 8f;
@@ -28,7 +31,7 @@ public class PistolController : MonoBehaviour
     [SerializeField] private bool keepScriptAfterThrow = false;
     [SerializeField] private GameObject thrownPrefab;
     [SerializeField] private float thrownGravityScale = 0f;
-    [SerializeField] private float rotationDamping = 2f;
+    [SerializeField] private float rotationSpeed = 200f;
     private Transform throwPoint;
     private Rigidbody2D thrownRb;
     private Collider2D thrownCollider;
@@ -36,7 +39,7 @@ public class PistolController : MonoBehaviour
     [Header("Events")]
     [SerializeField] private UnityEvent OnFire;
     [SerializeField] private UnityEvent OnEmpty;
-    [SerializeField] private UnityEvent OnThrow;
+
     [SerializeField] private UnityEvent<int> OnAmmoChanged;
 
     public bool IsEmpty => currentAmmo <= 0;
@@ -50,17 +53,14 @@ public class PistolController : MonoBehaviour
         thrownRb = thrownPrefab.GetComponent<Rigidbody2D>();
         thrownCollider = thrownPrefab.GetComponent<Collider2D>();
 
-        if (thrownRb != null) thrownRb.isKinematic = true;
         if (thrownRb != null) thrownRb.gravityScale = 0;
-        if (thrownCollider != null) thrownCollider.enabled = false;
-        line = GetComponent<LineRenderer>();
         line.enabled = false;
         OnAmmoChanged?.Invoke(currentAmmo);
     }
 
     public void TryShoot()
     {
-        if (IsThrown|| !IsOun) return;
+        if (IsThrown|| !IsOun|| !canRange) return;
         if (Time.time < nextFireTime) return;
 
         if (currentAmmo > 0)
@@ -71,19 +71,43 @@ public class PistolController : MonoBehaviour
         {
             OnEmpty?.Invoke();
             if (autoThrowOnEmpty)
-                Throw(shootPoint.forward);
+                Throw();
         }
     }
 
     private void Shoot()
     {
-        if (bulletPrefab == null || shootPoint == null || gameObject == null)
+        if (shootPoint == null || gameObject == null) return;
+        Vector2 directionCast = Vector2.zero;
+        if (shootPoint.lossyScale.x > 0)
         {
-            return;
+            directionCast = shootPoint.right;
         }
+        else
+        {
+            directionCast = -shootPoint.right;
+        }
+  
 
-        RaycastHit2D hit = Physics2D.Raycast(shootPoint.position, shootPoint.forward, hitRange, hitMask);
-        Vector3 endPoint = hit.collider ? (Vector3)hit.point : shootPoint.position + (Vector3)shootPoint.forward * hitRange;
+        RaycastHit2D hit = Physics2D.Raycast(shootPoint.position, directionCast, hitRange, hitMask);
+        if (hit.collider != null)
+        {
+            if(hit.collider.TryGetComponent(out HpController hp))
+            {
+                hp.TakeDamage(damage);
+            }
+     
+        }
+        Vector3 endPoint = hit.collider ? (Vector3)hit.point : (Vector3)(shootPoint.position + (Vector3)directionCast * hitRange);
+
+        Color startColor = line.startColor;
+        Color endColor = line.endColor;
+        startColor.a = 1f; 
+        endColor.a = 1f;
+
+        line.startColor = startColor;
+        line.endColor = endColor;
+
         line.enabled = true;
         line.SetPosition(0, shootPoint.position);
         line.SetPosition(1, endPoint);
@@ -94,15 +118,27 @@ public class PistolController : MonoBehaviour
 
         nextFireTime = Time.time + fireRate;
 
-
-
         if (currentAmmo <= 0)
             OnEmpty?.Invoke();
-        StartCoroutine(FadeLine());
+        if (fadeCoroutine != null)
+            StopCoroutine(fadeCoroutine);
+
+        fadeCoroutine = StartCoroutine(FadeLine(startColor, endColor));
     }
-    public void Throw(Vector2 direction)
+
+    public void Throw()
     {
         if (IsThrown) return;
+
+        Vector2 directionCast = Vector2.zero;
+        if (shootPoint.lossyScale.x > 0)
+        {
+            directionCast = shootPoint.right;
+        }
+        else
+        {
+            directionCast = -shootPoint.right;
+        }
 
         if (thrownPrefab != null)
         {
@@ -112,8 +148,8 @@ public class PistolController : MonoBehaviour
             if (rb != null)
             {
                 rb.gravityScale = thrownGravityScale;
-                rb.velocity = direction.normalized * throwSpeed;
-                rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, 0f, rotationDamping * Time.deltaTime);
+                rb.AddForce(directionCast * throwSpeed, ForceMode2D.Force);
+                rb.angularVelocity = rotationSpeed;
             }
         }
         else
@@ -121,7 +157,7 @@ public class PistolController : MonoBehaviour
             if (thrownRb != null)
             {
                 thrownRb.isKinematic = false;
-                thrownRb.velocity = direction.normalized * throwSpeed;
+                thrownRb.velocity = directionCast.normalized * throwSpeed;
                 thrownRb.gravityScale = thrownGravityScale;
             }
             if (thrownCollider != null)
@@ -133,11 +169,6 @@ public class PistolController : MonoBehaviour
 
         if (!keepScriptAfterThrow)
             enabled = false;
-    }
-
-    public void Throw()
-    {
-        Throw(transform.right);
     }
 
     public int Reload(int amount)
@@ -172,36 +203,36 @@ public class PistolController : MonoBehaviour
 
         OnAmmoChanged?.Invoke(currentAmmo);
     }
-    private System.Collections.IEnumerator FadeLine()
+    private System.Collections.IEnumerator FadeLine(Color startColor, Color endColor)
     {
-        float timer = 0f;
-
-        Color startColor = line.startColor;
-        Color endColor = line.endColor;
-        float startAlpha = startColor.a;
-
         yield return new WaitForSecondsRealtime(lineDuration);
 
+        float timer = 0f;
         while (timer < fadeDuration)
         {
             timer += Time.deltaTime;
             float t = timer / fadeDuration;
-            float alpha = Mathf.Lerp(startAlpha, 0f, t);
-            Color newStart = new Color(startColor.r, startColor.g, startColor.b, alpha);
-            Color newEnd = new Color(endColor.r, endColor.g, endColor.b, alpha);
-            line.startColor = newStart;
-            line.endColor = newEnd;
+            float alpha = Mathf.Lerp(1f, 0f, t);
+
+            line.startColor = new Color(startColor.r, startColor.g, startColor.b, alpha);
+            line.endColor = new Color(endColor.r, endColor.g, endColor.b, alpha);
 
             yield return null;
         }
 
         line.enabled = false;
     }
-#if UNITY_EDITOR
-    private void Update()
+    private void OnDrawGizmos()
     {
-        if (UnityEngine.Input.GetKeyDown(KeyCode.Space))
-            TryShoot();
+        Vector2 directionCast = Vector2.zero;
+        if (shootPoint.lossyScale.x > 0)
+        {
+            directionCast = shootPoint.right;
+        }
+        else
+        {
+            directionCast = -shootPoint.right;
+        }
+        Gizmos.DrawLine(shootPoint.position, directionCast * hitRange);
     }
-#endif
 }

@@ -5,6 +5,10 @@ public class EnemyViewChecker : MonoBehaviour
 {
     public bool PlayerInSight { get; private set; }
 
+    [Header("Type")]
+    [SerializeField] private bool Melee;
+    [SerializeField] private bool Range;
+
     [Header("Move")]
     [SerializeField] private float speed = 2f;
     [SerializeField] private float chaseStopDistance = 1.5f;
@@ -26,19 +30,33 @@ public class EnemyViewChecker : MonoBehaviour
     [SerializeField] private Color detectedColor = Color.red;
 
     [Header("Melee")]
-    [SerializeField] private float distance;
-    [SerializeField] private float range;
-    [SerializeField] private int countRays;
+    [SerializeField] private float distance = 1f;
+    [SerializeField] private float range = 1f;
+    [SerializeField] private int countRays = 3;
     [SerializeField] private RaycastHit2D[] hits;
+
+    [Header("Fire settings")]
+    [SerializeField] private float fireRate = 0.25f;
+    [SerializeField] private int damage = 1;
+    [SerializeField] private float bulletSpeed = 20f;
+    [SerializeField] private Transform shootPoint;
+    [SerializeField] private GameObject Prefab;
+    [SerializeField] private LayerMask hitMask;
+
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
 
     private Transform target;
     private Vector3 lastKnownPosition;
     private bool isChasing;
     private bool isAttacking;
+    private float nextFireTime = 0f;
+    private Coroutine fadeCoroutine;
 
     private void Awake()
     {
         hits = new RaycastHit2D[countRays];
+        if (animator == null) animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -47,6 +65,8 @@ public class EnemyViewChecker : MonoBehaviour
 
         if (isChasing && !isAttacking)
             ChasePlayer();
+        else
+            SetMoveAnimation(false);
 
         if (PlayerInSight && canAttack && IsPlayerInAttackRange())
         {
@@ -63,7 +83,6 @@ public class EnemyViewChecker : MonoBehaviour
     private void StartAttack()
     {
         if (!canAttack) return;
-
         StartCoroutine(AttackRoutine());
     }
 
@@ -73,6 +92,7 @@ public class EnemyViewChecker : MonoBehaviour
         canAttack = false;
 
         StopMovement();
+        SetMoveAnimation(false);
 
         PerformAttack();
 
@@ -84,40 +104,66 @@ public class EnemyViewChecker : MonoBehaviour
 
     private void StopMovement()
     {
+        // Можно добавить сброс скорости или pathfinding если нужно
     }
 
     private void PerformAttack()
     {
+        if (Melee || Range)
+            StartCoroutine(MeleeAttackWithDelay(0.15f));
+    }
 
-        TryMelee();
+    private IEnumerator MeleeAttackWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
 
+        if (Melee)
+            TryMelee();
+        else if (Range)
+            TryRange();
     }
 
     void TryMelee()
     {
+        if (!Melee) return;
         if (countRays <= 0) return;
-
-        hits[0] = Physics2D.Raycast(transform.position, transform.right * distance);
+        SetAttackAnimation();
+        hits[0] = Physics2D.Raycast(transform.position, transform.right, distance, hitMask);
 
         for (int i = 1; i < countRays; i++)
         {
             Vector3 lastray = transform.up * (range * i / countRays);
-            hits[i] = Physics2D.Raycast(transform.position, (transform.right + lastray) * distance);
+            hits[i] = Physics2D.Raycast(transform.position, (transform.right + lastray).normalized, distance, hitMask);
 
             if (i + 1 < countRays)
             {
                 i++;
-                hits[i] = Physics2D.Raycast(transform.position, (transform.right - lastray) * distance);
+                hits[i] = Physics2D.Raycast(transform.position, (transform.right - lastray).normalized, distance, hitMask);
             }
         }
 
         foreach (var hit in hits)
         {
-            if (hit.collider != null && hit.collider.CompareTag("Player"))
+            if (hit.collider == null) continue;
+
+            if (((1 << hit.collider.gameObject.layer) & hitMask) != 0)
             {
-                Debug.Log("Попал по игроку!");
+                if (hit.collider.TryGetComponent(out HpController hp))
+                    hp.TakeDamage(damage);
             }
         }
+    }
+
+    void TryRange()
+    {
+        if (!Range) return;
+        if (Time.time < nextFireTime) return;
+        SetAttackAnimation();
+        GameObject trowObj = Instantiate(Prefab, shootPoint.transform.position, Quaternion.identity);
+        if (trowObj.TryGetComponent(out Rigidbody2D rb))
+            rb.AddForce(shootPoint.right * bulletSpeed, ForceMode2D.Impulse);
+
+        nextFireTime = Time.time + fireRate;
     }
 
     private void DetectPlayer()
@@ -125,7 +171,6 @@ public class EnemyViewChecker : MonoBehaviour
         Transform origin = viewOrigin != null ? viewOrigin : transform;
 
         RaycastHit2D hit = Physics2D.CircleCast(origin.position, viewDistance, origin.right, 0f, playerMask);
-
         if (hit.collider == null)
         {
             PlayerInSight = false;
@@ -134,9 +179,9 @@ public class EnemyViewChecker : MonoBehaviour
 
         target = hit.transform;
         Vector2 toTarget = target.position - origin.position;
-        float distance = toTarget.magnitude;
+        float dist = toTarget.magnitude;
 
-        if (distance > viewDistance)
+        if (dist > viewDistance)
         {
             PlayerInSight = false;
             return;
@@ -149,7 +194,6 @@ public class EnemyViewChecker : MonoBehaviour
         {
             lastKnownPosition = target.position;
             isChasing = true;
-
             RotateTowards(target.position);
         }
     }
@@ -163,6 +207,11 @@ public class EnemyViewChecker : MonoBehaviour
             if (!IsPlayerInAttackRange())
             {
                 MoveTowards(target.position);
+                SetMoveAnimation(true);
+            }
+            else
+            {
+                SetMoveAnimation(false);
             }
             RotateTowards(target.position);
         }
@@ -170,10 +219,12 @@ public class EnemyViewChecker : MonoBehaviour
         {
             RotateTowards(lastKnownPosition);
             MoveTowards(lastKnownPosition);
+            SetMoveAnimation(true);
 
             if (Vector2.Distance(transform.position, lastKnownPosition) < chaseStopDistance)
             {
                 isChasing = false;
+                SetMoveAnimation(false);
             }
         }
     }
@@ -186,10 +237,20 @@ public class EnemyViewChecker : MonoBehaviour
     private void RotateTowards(Vector3 targetPosition)
     {
         Vector2 direction = (targetPosition - transform.position).normalized;
-
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
+    private void SetMoveAnimation(bool state)
+    {
+        if (animator != null)
+            animator.SetBool("IsMove", state);
+    }
+
+    private void SetAttackAnimation()
+    {
+        if (animator != null)
+            animator.SetTrigger("Attack");
     }
 
     private void OnDrawGizmos()
@@ -214,12 +275,12 @@ public class EnemyViewChecker : MonoBehaviour
         for (int i = 1; i < countRays; i++)
         {
             Vector3 lastray = transform.up * (range * i / countRays);
-            Gizmos.DrawRay(transform.position, (transform.right + lastray) * distance);
+            Gizmos.DrawRay(transform.position, (transform.right + lastray).normalized * distance);
 
             if (i + 1 < countRays)
             {
                 i++;
-                Gizmos.DrawRay(transform.position, (transform.right - lastray) * distance);
+                Gizmos.DrawRay(transform.position, (transform.right - lastray).normalized * distance);
             }
         }
     }
