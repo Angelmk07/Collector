@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class HpController : MonoBehaviour
 {
     [SerializeField] private int hp;
-    private UnityEvent OnDead;
+    public UnityEvent OnDead;
 
     public void TakeDamage(int value)
     {

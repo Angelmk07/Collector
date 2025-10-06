@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class PlayerMelee : MonoBehaviour
 {
+    public bool canMelee;
     [SerializeField] private Animator animator;
-
+ 
     [SerializeField] private LayerMask enemyLayers;
     [SerializeField] private Vector3 attackPosition;
     [SerializeField] private float attackRadius;
@@ -50,6 +51,7 @@ public class PlayerMelee : MonoBehaviour
 
     void HandleAttack()
     {
+        if (!canMelee) return;
         if (Input.GetMouseButtonDown(0) && cooldownTimer <= 0)
             DamageBeginning();
     }
@@ -95,9 +97,8 @@ public class PlayerMelee : MonoBehaviour
 
     void DealDamage(GameObject target)
     {
-        // Здесь добавить логику нанесения урона
-
-        Debug.Log($"Hit: {target.name} with {damage} damage");
+        target.TryGetComponent(out HpController hp);
+        hp.TakeDamage(damage);
     }
 
     void OnDrawGizmos()
