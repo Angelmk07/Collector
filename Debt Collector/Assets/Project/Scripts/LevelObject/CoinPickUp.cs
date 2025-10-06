@@ -15,7 +15,7 @@ public class CoinPickUp : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            playerStatus.GiveMoney(giveMoney);
+            playerStatus.GetMoney(giveMoney);
             Destroy(gameObject);
         }
     }

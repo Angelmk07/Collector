@@ -8,13 +8,20 @@ public class DialogueSystem : MonoBehaviour
 {
     public UnityEvent onActive;
     public UnityEvent onDeactive;
+    public PlayerStatus playerStatus;
     public List<DialogueSettings> dialogueSettings;
     [Min(0f)] public float textSpeed = 50f;
+    public int needMoney;
+    public int moneyIncreaseAmount = 100;
 
     public GameObject DialoguePanel;
-    public Image personaImage;
+    public Image personaImage_01;
+    public Image personaImage_02;
     public TMP_Text nameText;
     public TMP_Text dialogueText;
+    public Button closeDialogueButton;
+    public Button buyGunButton;
+    public Button giveMoneyButton;
 
     private string currentText;
     private int currentDialogue;
@@ -27,6 +34,11 @@ public class DialogueSystem : MonoBehaviour
     void Awake()
     {
         DeactiveDialogue();
+        closeDialogueButton.onClick.AddListener(() => DeactiveDialogue());
+
+        /*buyGunButton.onClick.AddListener(() => логика траты денег на оружие);*/
+
+        giveMoneyButton.onClick.AddListener(() => GiveMoneyAndIncrease());
     }
 
     void Update()
@@ -56,6 +68,9 @@ public class DialogueSystem : MonoBehaviour
 
         isActive = false;
 
+        closeDialogueButton.gameObject.SetActive(false);
+        buyGunButton.gameObject.SetActive(false);
+        giveMoneyButton.gameObject.SetActive(false);
         DialoguePanel.SetActive(false);
 
         ResetTyping();
@@ -81,7 +96,13 @@ public class DialogueSystem : MonoBehaviour
                 {
                     nameText.text = "";
                     dialogueText.text = "";
-                    DeactiveDialogue();
+                    closeDialogueButton.gameObject.SetActive(true);
+                    buyGunButton.gameObject.SetActive(true);
+
+                    if (playerStatus.money >= needMoney)
+                        giveMoneyButton.gameObject.SetActive(true);
+                    else
+                        giveMoneyButton.gameObject.SetActive(false);
                 }
             }
         }
@@ -122,7 +143,8 @@ public class DialogueSystem : MonoBehaviour
 
     private void StartTypingDialogue()
     {
-        personaImage.sprite = dialogueSettings[currentDialogue].persona;
+        personaImage_01.sprite = dialogueSettings[currentDialogue].persona_01;
+        personaImage_02.sprite = dialogueSettings[currentDialogue].persona_02;
         nameText.text = $"[ {dialogueSettings[currentDialogue].name} ]";
 
         ResetTyping();
@@ -150,6 +172,13 @@ public class DialogueSystem : MonoBehaviour
         currentText = "";
         timer = 0f;
         currentCharacter = 0;
+    }
+
+    private void GiveMoneyAndIncrease()
+    {
+        playerStatus.GiveMoney(needMoney);
+        needMoney += moneyIncreaseAmount;
+        DeactiveDialogue();
     }
 
     public bool IsDialogueActive()

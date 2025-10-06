@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour, IDamageable
 {
-    [SerializeField] private int health;
-    [SerializeField] private int money;
+    public int health;
+    public int money;
 
     public int completedLevels;
 
@@ -12,9 +12,14 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         LoadVariables();
     }
 
-    public void GiveMoney(int giveMoney)
+    public void GetMoney(int giveMoney)
     {
         money += giveMoney;
+    }
+
+    public void GiveMoney(int giveMoney)
+    {
+        money -= giveMoney;
     }
 
     public void TakeDamage(int damage)
