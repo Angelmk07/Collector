@@ -1,13 +1,16 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class PlayerStatus : MonoBehaviour, IDamageable
+public class PlayerStatus : MonoBehaviour
 {
     public int health;
     public int money;
     public int completedLevels;
     [SerializeField] private TMP_Text moneyText;
     [SerializeField] private TMP_Text completedLevelsText;
+    [SerializeField] private UnityEvent Ondead;
+    [SerializeField] private UnityEvent<int> SaveLeader;
 
     void Awake()
     {
@@ -27,17 +30,12 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         UpdateText();
     }
 
-    public void TakeDamage(int damage)
-    {
-        health -= damage;
 
-        if (health <= 0)
-            Die();
-    }
 
     public void Die()
     {
-        // Здесь добавить логику смерти
+        Ondead?.Invoke();
+        SaveLeader?.Invoke(completedLevels);
     }
 
     public void SaveVariables()

@@ -3,12 +3,7 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
 
-[System.Serializable]
-public class PlayerData
-{
-    public string name;
-    public int levelsPassed;
-}
+
 
 public class FirebaseSimple : MonoBehaviour
 {
@@ -17,9 +12,9 @@ public class FirebaseSimple : MonoBehaviour
 
 
     [System.Obsolete]
-    public void SendScore(string playerName, int levels)
+    public void SendScore( int levels)
     {
-        PlayerData data = new PlayerData { name = playerName, levelsPassed = levels };
+        PlayerData data = new PlayerData { name = PlayerPrefs.GetString("PlayerName", "Unknown"), levelsPassed = levels };
         string json = JsonUtility.ToJson(data);
 
         StartCoroutine(PostScoreCoroutine(json));
@@ -105,5 +100,11 @@ public class FirebaseSimple : MonoBehaviour
                 callback?.Invoke(new List<PlayerData>());
             }
         }
+    }
+    [System.Serializable]
+    public class PlayerData
+    {
+        public string name;
+        public int levelsPassed;
     }
 }
