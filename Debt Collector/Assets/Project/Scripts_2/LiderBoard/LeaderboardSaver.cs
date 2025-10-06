@@ -13,7 +13,8 @@ public class PlayerData
 public class FirebaseSimple : MonoBehaviour
 {
 
-    string firebaseURL = "https://collector-debt-game-default-rtdb.firebaseio.com/leaderboard.json";
+    string firebaseURL = "https://collector-debt-game-default-rtdb.europe-west1.firebasedatabase.app/leaderboard.json";
+
 
     [System.Obsolete]
     public void SendScore(string playerName, int levels)
@@ -42,7 +43,7 @@ public class FirebaseSimple : MonoBehaviour
         }
     }
 
-    // -------------------- ЗАГРУЗКА ТОП-5 --------------------
+    // ЗАГРУЗКА ТОП-5 
     public void GetTop5(System.Action<List<PlayerData>> callback)
     {
         StartCoroutine(GetTop5Coroutine(callback));
