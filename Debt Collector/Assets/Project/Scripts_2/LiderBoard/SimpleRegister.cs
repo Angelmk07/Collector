@@ -1,9 +1,10 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SimpleRegister : MonoBehaviour
 {
-    [SerializeField] private InputField nameInput;
+    [SerializeField] private TMP_InputField nameInput;
     [SerializeField] private GameObject registerPanel;
 
     void Start()
@@ -17,6 +18,7 @@ public class SimpleRegister : MonoBehaviour
     public void OnRegisterClick()
     {
         string playerName = nameInput.text.Trim();
+
         if (string.IsNullOrEmpty(playerName)) return;
 
         PlayerPrefs.SetString("PlayerName", playerName);

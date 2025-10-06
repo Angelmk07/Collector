@@ -1,20 +1,30 @@
+using TMPro;
 using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour, IDamageable
 {
-    [SerializeField] private int health;
-    [SerializeField] private int money;
-
+    public int health;
+    public int money;
     public int completedLevels;
+    [SerializeField] private TMP_Text moneyText;
+    [SerializeField] private TMP_Text completedLevelsText;
 
     void Awake()
     {
         LoadVariables();
+        UpdateText();
+    }
+
+    public void GetMoney(int giveMoney)
+    {
+        money += giveMoney;
+        UpdateText();
     }
 
     public void GiveMoney(int giveMoney)
     {
-        money += giveMoney;
+        money -= giveMoney;
+        UpdateText();
     }
 
     public void TakeDamage(int damage)
@@ -52,5 +62,11 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 
         money = 0;
         completedLevels = 0;
+    }
+
+    public void UpdateText()
+    {
+        moneyText.text = money.ToString();
+        completedLevelsText.text = completedLevels.ToString();
     }
 }
