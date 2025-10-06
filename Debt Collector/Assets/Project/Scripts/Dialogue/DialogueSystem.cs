@@ -8,6 +8,7 @@ public class DialogueSystem : MonoBehaviour
 {
     public UnityEvent onActive;
     public UnityEvent onDeactive;
+    public UnityEvent onBuyWeapon;
     public PlayerStatus playerStatus;
     public List<DialogueSettings> dialogueSettings;
     [Min(0f)] public float textSpeed = 50f;
@@ -36,7 +37,7 @@ public class DialogueSystem : MonoBehaviour
         DeactiveDialogue();
         closeDialogueButton.onClick.AddListener(() => DeactiveDialogue());
 
-        /*buyGunButton.onClick.AddListener(() => логика траты денег на оружие);*/
+        buyGunButton.onClick.AddListener(() => onBuyWeapon.Invoke());
 
         giveMoneyButton.onClick.AddListener(() => GiveMoneyAndIncrease());
     }
