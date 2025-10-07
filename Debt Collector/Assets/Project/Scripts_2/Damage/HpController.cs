@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class HpController : MonoBehaviour
 {
     [SerializeField] private int hp;
+    [SerializeField] private bool addcoin;
     [SerializeField] private GameObject coin;
     public UnityEvent OnDead;
 
@@ -13,7 +14,8 @@ public class HpController : MonoBehaviour
     {
         hp -= value;
         OnDead.Invoke();
-        Instantiate(coin, transform.position, Quaternion.identity);
+        if(addcoin)
+            Instantiate(coin, transform.position, Quaternion.identity);
     }
 
 }

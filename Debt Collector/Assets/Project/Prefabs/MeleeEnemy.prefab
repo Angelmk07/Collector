@@ -286,8 +286,8 @@ GameObject:
   - component: {fileID: 2078864509346239855}
   - component: {fileID: 8530590725100349252}
   - component: {fileID: 5091981204177052108}
-  - component: {fileID: 6812199474403095750}
   - component: {fileID: 5086651157193399641}
+  - component: {fileID: 4439345287270911862}
   m_Layer: 8
   m_Name: business_head
   m_TagString: Untagged
@@ -402,22 +402,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7900063f72a9369408bef6b87ba5fcec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6812199474403095750
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5781193543809230658}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f2a78c59b648b64b9528b32424fd3ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hp: 1
-  OnDead:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!61 &5086651157193399641
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -463,6 +447,36 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.8425547, y: 1.4123559}
   m_EdgeRadius: 0
+--- !u!114 &4439345287270911862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5781193543809230658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f2a78c59b648b64b9528b32424fd3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp: 1
+  addcoin: 0
+  coin: {fileID: 5251770400779943665, guid: 63be03dab0f9b284f8c838be16e75e21, type: 3}
+  OnDead:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 267023443364083654}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6201627297992821737
 GameObject:
   m_ObjectHideFlags: 0

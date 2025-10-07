@@ -423,7 +423,7 @@ GameObject:
   - component: {fileID: 635273714527239471}
   - component: {fileID: 3960439595110478063}
   - component: {fileID: 7118933084994298945}
-  - component: {fileID: 5393064540632360668}
+  - component: {fileID: 1486984728769920790}
   m_Layer: 8
   m_Name: gopnik_head
   m_TagString: Untagged
@@ -556,7 +556,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.65923077, y: 1.4891685}
   m_EdgeRadius: 0
---- !u!114 &5393064540632360668
+--- !u!114 &1486984728769920790
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -569,9 +569,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
+  addcoin: 0
+  coin: {fileID: 5251770400779943665, guid: 63be03dab0f9b284f8c838be16e75e21, type: 3}
   OnDead:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4068945662600413316}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5388825642776654328
 GameObject:
   m_ObjectHideFlags: 0

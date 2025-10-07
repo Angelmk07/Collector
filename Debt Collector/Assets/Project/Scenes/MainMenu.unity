@@ -860,7 +860,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nameInput: {fileID: 13721335}
-  registerPanel: {fileID: 13721331}
+  registerPanel: {fileID: 2106903149}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -2517,83 +2517,82 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Privacy Policy
 
-    
+
 
     Last updated: October 6, 2025
 
-    
 
-    1.
-    Who we are
 
-    
+    1. Who we are
 
-    We are the developers of the game Etazh, which uses Google
-    Firebase services to store player data.
 
-    
+
+    We
+    are the developers of the game Etazh, which uses Google Firebase services to
+    store player data.
+
+
 
     2. What data we collect
 
-    
 
-    Nickname
-    (entered manually by the player)
 
-    
+    Nickname (entered manually
+    by the player)
+
+
 
     Game results (score, ranking, etc.)
 
-    
 
-    3.
-    Why we collect this data
 
-    
+    3. Why we collect
+    this data
 
-    This information is used only to display
-    the leaderboard inside the game.
 
-    Your nickname and score may be visible
-    to other players in the leaderboard.
 
-    No personal information is used for
-    advertising or shared with any third parties.
+    This information is used only to display the leaderboard inside
+    the game.
 
-    
+    Your nickname and score may be visible to other players in the
+    leaderboard.
 
-    4. Where the data
-    is stored
+    No personal information is used for advertising or shared with
+    any third parties.
 
-    
 
-    All data is securely stored in Google Firebase (Google
-    LLC), which provides safe data storage and processing.
 
-    
+    4. Where the data is stored
+
+
+
+    All data is securely
+    stored in Google Firebase (Google LLC), which provides safe data storage and
+    processing.
+
+
 
     5. Data deletion
 
-    
 
-    You
-    can request the deletion of your data by sending an email to the developer at
-    ( gamerespond.dev@gmail.com ).
 
-    Please include the nickname you used in
-    the game so that we can locate and remove your record from the leaderboard.
+    You can request the deletion of your
+    data by sending an email to the developer at ( gamerespond.dev@gmail.com ).
 
-    
+    Please
+    include the nickname you used in the game so that we can locate and remove your
+    record from the leaderboard.
 
-    6.
-    Consent
 
-    
 
-    By continuing to use the game, you agree to this Privacy
-    Policy.
+    6. Consent
 
-    
+
+
+    By continuing to use the
+    game, you agree to this Privacy Policy.
+
+
 
 '
   m_isRightToLeft: 0

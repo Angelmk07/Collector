@@ -187,6 +187,7 @@ public class PistolController : MonoBehaviour
     public int GetAmmo() => currentAmmo;
     public void ResetState()
     {
+        IsOun = true;
         IsThrown = false;
         currentAmmo = magazineSize;
         nextFireTime = 0f;
