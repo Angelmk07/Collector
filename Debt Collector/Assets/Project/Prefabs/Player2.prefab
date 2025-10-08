@@ -3359,6 +3359,12 @@ MonoBehaviour:
   completedLevels: 0
   moneyText: {fileID: 6894634825254099867}
   completedLevelsText: {fileID: 7792449439399317081}
+  Ondead:
+    m_PersistentCalls:
+      m_Calls: []
+  SaveLeader:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &4046509187319270870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3371,7 +3377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6171289260dba42bb65d8b93975740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2.5
+  moveSpeed: 6
   rb: {fileID: 862870092447566800}
   animator: {fileID: 3635082838265412434}
   playerSprite: {fileID: 8397095131521245706}
@@ -3485,6 +3491,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 1
+  addcoin: 0
+  coin: {fileID: 0}
   OnDead:
     m_PersistentCalls:
       m_Calls:

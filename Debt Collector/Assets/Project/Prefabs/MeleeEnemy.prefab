@@ -65,6 +65,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9137636939535681040}
+  - {fileID: 2494728559694287927}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &5771725150213521523
@@ -106,7 +107,7 @@ MonoBehaviour:
   chaseStopDistance: 3.39
   viewAngle: 114.5
   viewDistance: 5.11
-  viewOrigin: {fileID: 0}
+  viewOrigin: {fileID: 2494728559694287927}
   playerMask:
     serializedVersion: 2
     m_Bits: 512
@@ -126,7 +127,7 @@ MonoBehaviour:
   Prefab: {fileID: 0}
   hitMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   animator: {fileID: 5771725150213521523}
 --- !u!50 &6481652387513327304
 Rigidbody2D:
@@ -187,6 +188,37 @@ Transform:
   - {fileID: 9145015544304820516}
   m_Father: {fileID: 1291868677330700360}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4476126711074894780
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2494728559694287927}
+  m_Layer: 8
+  m_Name: Eye
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2494728559694287927
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4476126711074894780}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: -1, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1593778587897976888}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
 --- !u!1 &4807092883864028226
 GameObject:
   m_ObjectHideFlags: 0
