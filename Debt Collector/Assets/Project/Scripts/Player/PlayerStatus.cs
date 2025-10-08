@@ -7,6 +7,7 @@ public class PlayerStatus : MonoBehaviour
     public int health;
     public int money;
     public int completedLevels;
+    public int needMoney;
     [SerializeField] private TMP_Text moneyText;
     [SerializeField] private TMP_Text completedLevelsText;
     [SerializeField] private UnityEvent Ondead;
@@ -30,7 +31,10 @@ public class PlayerStatus : MonoBehaviour
         UpdateText();
     }
 
-
+    public void UpdateNeedMoney(int giveNeedMoney)
+    {
+        needMoney += giveNeedMoney;
+    }
 
     public void Die()
     {
@@ -42,6 +46,7 @@ public class PlayerStatus : MonoBehaviour
     {
         PlayerPrefs.SetInt("MoneyVariables", money);
         PlayerPrefs.SetInt("CompletedLevelsVariables", completedLevels);
+        PlayerPrefs.SetInt("NeedMoney", needMoney);
 
         PlayerPrefs.Save();
     }
@@ -50,16 +55,19 @@ public class PlayerStatus : MonoBehaviour
     {
         money = PlayerPrefs.GetInt("MoneyVariables", money);
         completedLevels = PlayerPrefs.GetInt("CompletedLevelsVariables", completedLevels);
+        needMoney = PlayerPrefs.GetInt("NeedMoney", needMoney);
     }
 
     public void ResetSave()
     {
         PlayerPrefs.DeleteKey("MoneyVariables");
         PlayerPrefs.DeleteKey("CompletedLevelsVariables");
+        PlayerPrefs.DeleteKey("NeedMoney");
         PlayerPrefs.Save();
 
         money = 0;
         completedLevels = 0;
+        needMoney = 0;
     }
 
     public void UpdateText()

@@ -26,4 +26,9 @@ public class PlayerMovement : MonoBehaviour
         else if (movement.x < 0)
             playerSprite.localScale = new Vector3(-1f, 1f, 1f);
     }
+
+    private void OnDisable()
+    {
+        rb.velocity = Vector3.zero;
+    }
 }
