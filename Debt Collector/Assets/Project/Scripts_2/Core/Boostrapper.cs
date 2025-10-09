@@ -9,6 +9,7 @@ public class Boostrapper : MonoBehaviour
     [SerializeField] private Eyes eyes;
     [SerializeField] private RotateToMouse2D mouse2D;
     [SerializeField] private WeaponSwitcher weapon;
+    [SerializeField] private LeaderboardSaver leaderboard;
     private void Awake()
     {
         ClickListener.OnClicl.AddListener(pistol.TryShoot);

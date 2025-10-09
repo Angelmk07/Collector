@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class PlayerStatus : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class PlayerStatus : MonoBehaviour
     [SerializeField] private TMP_Text moneyText;
     [SerializeField] private TMP_Text completedLevelsText;
     [SerializeField] private UnityEvent Ondead;
-    [SerializeField] private UnityEvent<int> SaveLeader;
+    [SerializeField] private LeaderboardSaver leaderboard;
 
     void Awake()
     {
@@ -36,10 +37,13 @@ public class PlayerStatus : MonoBehaviour
         needMoney += giveNeedMoney;
     }
 
+    [System.Obsolete]
     public void Die()
     {
+        leaderboard.SendScore(completedLevels);
         Ondead?.Invoke();
-        SaveLeader?.Invoke(completedLevels);
+        ResetSave();
+        SceneManager.LoadScene(0);
     }
 
     public void SaveVariables()

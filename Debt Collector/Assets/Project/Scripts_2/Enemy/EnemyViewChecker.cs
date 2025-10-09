@@ -45,6 +45,7 @@ public class EnemyViewChecker : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
+    [SerializeField] private bool isDead = false;
 
     private Transform target;
     private Vector3 lastKnownPosition;
@@ -61,17 +62,21 @@ public class EnemyViewChecker : MonoBehaviour
 
     private void Update()
     {
-        DetectPlayer();
-
-        if (isChasing && !isAttacking)
-            ChasePlayer();
-        else
-            SetMoveAnimation(false);
-
-        if (PlayerInSight && canAttack && IsPlayerInAttackRange())
+        if (!isDead)
         {
-            StartAttack();
+            DetectPlayer();
+
+            if (isChasing && !isAttacking)
+                ChasePlayer();
+            else
+                SetMoveAnimation(false);
+
+            if (PlayerInSight && canAttack && IsPlayerInAttackRange())
+            {
+                StartAttack();
+            }
         }
+
     }
 
     private bool IsPlayerInAttackRange()
@@ -105,6 +110,11 @@ public class EnemyViewChecker : MonoBehaviour
     private void StopMovement()
     {
         // Можно добавить сброс скорости или pathfinding если нужно
+    }
+    public void dead()
+    {
+        isDead = true;
+        animator.SetBool("IsDead", isDead);
     }
 
     private void PerformAttack()

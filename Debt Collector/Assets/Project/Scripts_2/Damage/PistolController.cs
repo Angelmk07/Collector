@@ -16,8 +16,10 @@ public class PistolController : MonoBehaviour
     [SerializeField] private Transform shootPoint;
     [SerializeField] private LayerMask hitMask;
     [SerializeField] private bool IsOun = false;
+    [SerializeField] private AudioClip musicClip;
+    [SerializeField] private float volume =0.02f;
     private Coroutine fadeCoroutine;
-
+    private static AudioSource musicSource;
 
     [Header("Line settings")]
     [SerializeField] private float lineDuration = 0.1f;
@@ -52,6 +54,9 @@ public class PistolController : MonoBehaviour
         throwPoint = shootPoint;
         thrownRb = thrownPrefab.GetComponent<Rigidbody2D>();
         thrownCollider = thrownPrefab.GetComponent<Collider2D>();
+        musicSource = gameObject.AddComponent<AudioSource>();
+        musicSource.clip = musicClip;
+        musicSource.volume = volume;
 
         if (thrownRb != null) thrownRb.gravityScale = 0;
         line.enabled = false;
@@ -117,7 +122,7 @@ public class PistolController : MonoBehaviour
         OnAmmoChanged?.Invoke(currentAmmo);
 
         nextFireTime = Time.time + fireRate;
-
+        musicSource.PlayOneShot(musicClip);
         if (currentAmmo <= 0)
             OnEmpty?.Invoke();
         if (fadeCoroutine != null)

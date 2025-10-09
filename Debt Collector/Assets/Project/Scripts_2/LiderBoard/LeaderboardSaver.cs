@@ -5,14 +5,13 @@ using System.Collections.Generic;
 
 
 
-public class FirebaseSimple : MonoBehaviour
+public class LeaderboardSaver : MonoBehaviour
 {
 
     string firebaseURL = "https://collector-debt-game-default-rtdb.europe-west1.firebasedatabase.app/leaderboard.json";
 
-
     [System.Obsolete]
-    public void SendScore( int levels)
+    public void SendScore(int levels)
     {
         PlayerData data = new PlayerData { name = PlayerPrefs.GetString("PlayerName", "Unknown"), levelsPassed = levels };
         string json = JsonUtility.ToJson(data);

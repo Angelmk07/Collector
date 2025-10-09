@@ -10,6 +10,7 @@ public class ThrownDoor2D : MonoBehaviour
     [SerializeField] private bool useGravity = false;
     [SerializeField] private HpController hpController;
     [SerializeField] private bool Used;
+    [SerializeField] private Sprite spriteDorKick;
     private Rigidbody2D rb;
     private float elapsedTime;
 
@@ -27,6 +28,10 @@ public class ThrownDoor2D : MonoBehaviour
 
         elapsedTime = 0f;
         Used = true;
+        if(gameObject.TryGetComponent(out SpriteRenderer sr)&&spriteDorKick!=null)
+            {
+            sr.sprite = spriteDorKick;
+        }
     }
 
     private void Update()
