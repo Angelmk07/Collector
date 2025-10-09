@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,6 +10,7 @@ public class PlayerStatus : MonoBehaviour
     public int money;
     public int completedLevels;
     public int needMoney;
+    [SerializeField] private GameObject pomer;
     [SerializeField] private TMP_Text moneyText;
     [SerializeField] private TMP_Text completedLevelsText;
     [SerializeField] private UnityEvent Ondead;
@@ -40,10 +42,8 @@ public class PlayerStatus : MonoBehaviour
     [System.Obsolete]
     public void Die()
     {
-        leaderboard.SendScore(completedLevels);
-        Ondead?.Invoke();
-        ResetSave();
-        SceneManager.LoadScene(0);
+        pomer.SetActive(true);
+        StartCoroutine(Restart());
     }
 
     public void SaveVariables()
@@ -78,5 +78,15 @@ public class PlayerStatus : MonoBehaviour
     {
         moneyText.text = money.ToString();
         completedLevelsText.text = completedLevels.ToString();
+    }
+
+    IEnumerator Restart()
+    {
+        leaderboard.SendScore(completedLevels);
+        Ondead?.Invoke();
+        ResetSave();
+        SceneManager.LoadScene(0);
+
+        yield return new WaitForSeconds(5f);
     }
 }
