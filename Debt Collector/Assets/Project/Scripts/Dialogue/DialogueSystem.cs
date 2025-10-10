@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
+using Image = UnityEngine.UI.Image;
 
 public class DialogueSystem : MonoBehaviour
 {
@@ -17,13 +20,14 @@ public class DialogueSystem : MonoBehaviour
     public List<DialogueSettings> giveMoneySettings;
     [Min(0f)] public float textSpeed = 50f;
     public int needMoneyForWeapon;
+    public int needMoneyForPass;
     public int moneyIncreaseAmount = 100;
     public bool useInput = true;
     public bool destroyInNextLevel;
-
+    public int passTakeinterval;
     public GameObject DialoguePanel;
     public Image personaImage_01;
-    public Image personaImage_02;
+    public UnityEngine.UI.Image personaImage_02;
     public TMP_Text nameText;
     public TMP_Text dialogueText;
     public Button closeDialogueButton;
@@ -37,7 +41,9 @@ public class DialogueSystem : MonoBehaviour
     private bool isActive;
     private bool isTyping;
     private bool playerInTrigger;
+    public bool playerGiveMoney;
     private DialogueChoice currentChoice;
+
 
     private enum DialogueChoice
     {
@@ -154,7 +160,7 @@ public class DialogueSystem : MonoBehaviour
         dialogueText.text = "";
         closeDialogueButton.gameObject.SetActive(true);
         buyGunButton.gameObject.SetActive(playerStatus.money >= needMoneyForWeapon);
-        giveMoneyButton.gameObject.SetActive(playerStatus.money >= needMoneyForWeapon);
+        giveMoneyButton.gameObject.SetActive(playerStatus.money >= needMoneyForPass && playerStatus.completedLevels% passTakeinterval == 0 && !playerGiveMoney);
     }
 
     private void OnCloseDialogueChoice()
@@ -175,6 +181,7 @@ public class DialogueSystem : MonoBehaviour
         currentChoice = DialogueChoice.GiveMoney;
         GiveMoneyAndIncrease();
         StartChoiceDialogue(giveMoneySettings);
+        playerGiveMoney = true;
     }
 
     private void StartChoiceDialogue(List<DialogueSettings> settings)
@@ -242,7 +249,7 @@ public class DialogueSystem : MonoBehaviour
             {
                 string baseText = "> " + currentText.Substring(0, currentCharacter);
 
-                char randomChar = (char)Random.Range(33, 127);
+                char randomChar = (char)UnityEngine.Random.Range(33, 127);
 
                 dialogueText.text = baseText + randomChar;
             }

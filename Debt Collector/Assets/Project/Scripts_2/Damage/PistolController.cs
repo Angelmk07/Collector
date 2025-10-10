@@ -18,6 +18,7 @@ public class PistolController : MonoBehaviour
     [SerializeField] private bool IsOun = false;
     [SerializeField] private AudioClip musicClip;
     [SerializeField] private float volume =0.02f;
+    [SerializeField] private int additionalmoney =5;
     private Coroutine fadeCoroutine;
     private static AudioSource musicSource;
 
@@ -100,6 +101,7 @@ public class PistolController : MonoBehaviour
             if(hit.collider.TryGetComponent(out HpController hp))
             {
                 hp.TakeDamage(damage);
+                hp.SpawnCoinAdditional(additionalmoney);
             }
      
         }

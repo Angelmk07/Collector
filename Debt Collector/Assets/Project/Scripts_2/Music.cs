@@ -1,12 +1,15 @@
 using UnityEngine;
+using System.Collections;
 
 public class BackgroundMusic : MonoBehaviour
 {
-    [SerializeField] private AudioClip musicClip;
+    [Header("Music Settings")]
+    [SerializeField] private AudioClip[] musicClips;
     [SerializeField] private float volume = 0.5f;
-    [SerializeField] private bool loop = true;
+    [SerializeField] private bool loopPlaylist = true; 
 
     private static AudioSource musicSource;
+    private static int currentTrackIndex = 0;
 
     private void Awake()
     {
@@ -17,12 +20,35 @@ public class BackgroundMusic : MonoBehaviour
         }
 
         musicSource = gameObject.AddComponent<AudioSource>();
-        musicSource.clip = musicClip;
         musicSource.volume = volume;
-        musicSource.loop = loop;
+        musicSource.loop = false;
         musicSource.playOnAwake = false;
 
-        musicSource.Play();
         DontDestroyOnLoad(gameObject);
+        StartCoroutine(PlayMusicSequentially());
+    }
+
+    private IEnumerator PlayMusicSequentially()
+    {
+        while (true)
+        {
+            if (musicClips.Length == 0)
+                yield break;
+
+            musicSource.clip = musicClips[currentTrackIndex];
+            musicSource.Play();
+
+            yield return new WaitForSeconds(musicSource.clip.length);
+
+            currentTrackIndex++;
+
+            if (currentTrackIndex >= musicClips.Length)
+            {
+                if (loopPlaylist)
+                    currentTrackIndex = 0; 
+                else
+                    yield break;
+            }
+        }
     }
 }

@@ -229,7 +229,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -20.170143, y: -31.193197, z: 0}
-  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_LocalScale: {x: -1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8011466484929873591}
@@ -279,7 +279,7 @@ MonoBehaviour:
   playerMask:
     serializedVersion: 2
     m_Bits: 512
-  attackDistance: 1
+  attackDistance: 6.33
   attackCooldown: 2
   canAttack: 1
   showDebug: 1
@@ -573,6 +573,7 @@ MonoBehaviour:
   hp: 1
   addcoin: 1
   coin: {fileID: 5251770400779943665, guid: 63be03dab0f9b284f8c838be16e75e21, type: 3}
+  coinCount: 0
   OnDead:
     m_PersistentCalls:
       m_Calls:
@@ -856,13 +857,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8674948995868093500}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0, z: -1, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4062112655977108482}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9130631421130505927
 GameObject:
   m_ObjectHideFlags: 0

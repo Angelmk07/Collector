@@ -52,7 +52,9 @@ public class EnemyViewChecker : MonoBehaviour
     private bool isChasing;
     private bool isAttacking;
     private float nextFireTime = 0f;
-    private Coroutine fadeCoroutine;
+
+    // === Главное свойство: направление взгляда ===
+    private Vector2 ViewDirection => viewOrigin != null ? viewOrigin.right : transform.right;
 
     private void Awake()
     {
@@ -76,7 +78,6 @@ public class EnemyViewChecker : MonoBehaviour
                 StartAttack();
             }
         }
-
     }
 
     private bool IsPlayerInAttackRange()
@@ -109,8 +110,9 @@ public class EnemyViewChecker : MonoBehaviour
 
     private void StopMovement()
     {
-        // Можно добавить сброс скорости или pathfinding если нужно
+        // можно добавить сброс скорости или pathfinding если нужно
     }
+
     public void dead()
     {
         isDead = true;
@@ -138,17 +140,18 @@ public class EnemyViewChecker : MonoBehaviour
         if (!Melee) return;
         if (countRays <= 0) return;
         SetAttackAnimation();
-        hits[0] = Physics2D.Raycast(transform.position, transform.right, distance, hitMask);
+
+        hits[0] = Physics2D.Raycast(viewOrigin.position, ViewDirection, distance, hitMask);
 
         for (int i = 1; i < countRays; i++)
         {
-            Vector3 lastray = transform.up * (range * i / countRays);
-            hits[i] = Physics2D.Raycast(transform.position, (transform.right + lastray).normalized, distance, hitMask);
+            Vector3 lastray = viewOrigin.up * (range * i / countRays);
+            hits[i] = Physics2D.Raycast(viewOrigin.position, (ViewDirection + (Vector2)lastray).normalized, distance, hitMask);
 
             if (i + 1 < countRays)
             {
                 i++;
-                hits[i] = Physics2D.Raycast(transform.position, (transform.right - lastray).normalized, distance, hitMask);
+                hits[i] = Physics2D.Raycast(viewOrigin.position, (ViewDirection - (Vector2)lastray).normalized, distance, hitMask);
             }
         }
 
@@ -169,9 +172,10 @@ public class EnemyViewChecker : MonoBehaviour
         if (!Range) return;
         if (Time.time < nextFireTime) return;
         SetAttackAnimation();
+
         GameObject trowObj = Instantiate(Prefab, shootPoint.transform.position, Quaternion.identity);
         if (trowObj.TryGetComponent(out Rigidbody2D rb))
-            rb.AddForce(shootPoint.right * bulletSpeed, ForceMode2D.Impulse);
+            rb.AddForce(ViewDirection * bulletSpeed, ForceMode2D.Impulse);
 
         nextFireTime = Time.time + fireRate;
     }
@@ -180,7 +184,7 @@ public class EnemyViewChecker : MonoBehaviour
     {
         Transform origin = viewOrigin != null ? viewOrigin : transform;
 
-        RaycastHit2D hit = Physics2D.CircleCast(origin.position, viewDistance, origin.right, 0f, playerMask);
+        RaycastHit2D hit = Physics2D.CircleCast(origin.position, viewDistance, ViewDirection, 0f, playerMask);
         if (hit.collider == null)
         {
             PlayerInSight = false;
@@ -197,7 +201,7 @@ public class EnemyViewChecker : MonoBehaviour
             return;
         }
 
-        float angle = Vector2.Angle(origin.right, toTarget);
+        float angle = Vector2.Angle(ViewDirection, toTarget);
         PlayerInSight = angle <= viewAngle * 0.5f;
 
         if (PlayerInSight)
@@ -269,8 +273,8 @@ public class EnemyViewChecker : MonoBehaviour
 
         Transform origin = viewOrigin != null ? viewOrigin : transform;
         Vector3 pos = origin.position;
-        Vector3 rightDir = Quaternion.Euler(0, 0, viewAngle / 2f) * origin.right * viewDistance;
-        Vector3 leftDir = Quaternion.Euler(0, 0, -viewAngle / 2f) * origin.right * viewDistance;
+        Vector3 rightDir = Quaternion.Euler(0, 0, viewAngle / 2f) * ViewDirection * viewDistance;
+        Vector3 leftDir = Quaternion.Euler(0, 0, -viewAngle / 2f) * ViewDirection * viewDistance;
 
         Gizmos.color = PlayerInSight ? detectedColor : viewColor;
         Gizmos.DrawRay(pos, rightDir);
@@ -281,16 +285,16 @@ public class EnemyViewChecker : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackDistance);
 
         Gizmos.color = Color.blue;
-        Gizmos.DrawRay(transform.position, transform.right * distance);
+        Gizmos.DrawRay(pos, ViewDirection * distance);
         for (int i = 1; i < countRays; i++)
         {
-            Vector3 lastray = transform.up * (range * i / countRays);
-            Gizmos.DrawRay(transform.position, (transform.right + lastray).normalized * distance);
+            Vector3 lastray = viewOrigin.up * (range * i / countRays);
+            Gizmos.DrawRay(pos, (ViewDirection + (Vector2)lastray).normalized * distance);
 
             if (i + 1 < countRays)
             {
                 i++;
-                Gizmos.DrawRay(transform.position, (transform.right - lastray).normalized * distance);
+                Gizmos.DrawRay(pos, (ViewDirection - (Vector2)lastray).normalized * distance);
             }
         }
     }
